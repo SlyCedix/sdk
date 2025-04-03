@@ -28,6 +28,22 @@ internal class AddProjectToProjectReferenceCommand(ParseResult parseResult) : Co
         var frameworkString = _parseResult.GetValue(ReferenceAddCommandParser.FrameworkOption);
 
         var arguments = _parseResult.GetValue(ReferenceAddCommandParser.ProjectPathArgument).ToList().AsReadOnly();
+
+        var noResolve = _parseResult.GetValue(ReferenceAddCommandParser.NoResolvePathOption);
+
+        if (noResolve)
+        {
+            if (msbuildProj.AddProjectToProjectReferences(
+                    frameworkString,
+                    arguments)
+                > 0)
+            {
+                msbuildProj.ProjectRootElement.Save();
+            }
+
+            return 0;
+        }
+
         PathUtility.EnsureAllPathsExist(arguments,
             CommonLocalizableStrings.CouldNotFindProjectOrDirectory, true);
         List<MsbuildProject> refs = [.. arguments.Select((r) => MsbuildProject.FromFileOrDirectory(projects, r, interactive))];

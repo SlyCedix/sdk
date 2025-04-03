@@ -27,6 +27,12 @@ internal static class ReferenceAddCommandParser
 
     }.AddCompletions(Complete.Complete.TargetFrameworksFromProjectFile);
 
+    public static readonly CliOption<bool> NoResolveOption = new("--no-resolve-path", "-n")
+            {
+                Arity = new ArgumentArity(0,0),
+                Description = LocalizableStrings.CmdNoResolveDescription,
+            };
+
     public static readonly CliOption<bool> InteractiveOption = CommonOptions.InteractiveOption();
 
     private static readonly CliCommand Command = ConstructCommand();
@@ -43,6 +49,7 @@ internal static class ReferenceAddCommandParser
         command.Arguments.Add(ProjectPathArgument);
         command.Options.Add(FrameworkOption);
         command.Options.Add(InteractiveOption);
+        command.Options.Add(NoResolveOption);
 
         command.SetAction((parseResult) => new AddProjectToProjectReferenceCommand(parseResult).Execute());
 
